@@ -10,13 +10,13 @@ jntj: todo
   - make to a class, object oriented
   - switch for inline usage?
   - error checking
-  - compatibility w/ scipy 0.7?
 """
 
 # import modules
 from scipy import special, comb
 from scipy.special import digamma, betaln, gammaln, exp, log
-from scipy.sparse import lil_matrix, extract_diagonal
+from scipy.sparse import lil_matrix
+from scipy import diagonal  # for scipy < 0.7, use 'from scipy import extract_diagonal as diagonal'
 from numpy import *
 from pylab import spy, show, imshow, axis, plot, figure, subplot, xlabel, ylabel, title, grid, hold, legend
 from matplotlib.ticker import FormatStrFormatter
@@ -222,7 +222,7 @@ def learn(A,K,net0={},opts={}):
         # compute expected edge counts <n**>s
         #QTAQ=mat((Q.T*A*Q).toarray())
         #npp=0.5*trace(QTAQ)
-        npp=0.5*extract_diagonal(Q.T*A*Q).sum()
+        npp=0.5*diagonal(Q.T*A*Q).sum()
         npm=0.5*trace(Q.T*(un*n-Q))-npp
         nmp=M-npp
         nmm=C-M-npm  
