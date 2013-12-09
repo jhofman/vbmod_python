@@ -14,13 +14,14 @@ jntj: todo
 """
 
 # import modules
-from scipy import special, comb
-from scipy.special import digamma, betaln, gammaln, exp, log
+from scipy import special
+from scipy.misc import comb
+from scipy.special import digamma, betaln, gammaln
 from scipy.sparse import lil_matrix
 from numpy import *
 from pylab import spy, show, imshow, axis, plot, figure, subplot, xlabel, ylabel, title, grid, hold, legend
 from matplotlib.ticker import FormatStrFormatter
-import scipy.weave as weave
+from scipy import weave
 from time import time
 import struct
 import networkx as nx
@@ -199,7 +200,7 @@ def learn(A,K,net0={},opts={}):
 
 		lnpi=digamma(a)-digamma(sum(a))
 
-		estep_inline(rows,cols,Q,float(JL),float(JG),array(lnpi),array(n))
+		estep_inline(rows,cols,array(Q),float(JL),float(JG),array(lnpi),array(n))
 		
 		"""
 		# local update (technically correct, but slow)
@@ -243,6 +244,9 @@ def learn(A,K,net0={},opts={}):
 
 		# evaluate variational free energy, an approximation to the
 		# negative log-evidence	
+		## Below 1e-323, numpy.log() return -inf which makes the rest of the
+		## method to somehow fail.
+		Qmat[Qmat<1e-323] = 1e-323
 		F.append(betaln(ap,bp)-betaln(ap0,bp0)+betaln(am,bm)-betaln(am0,bm0)+sum(gammaln(a))-gammaln(sum(a))-(sum(gammaln(a0))-gammaln(sum(a0)))-sum(multiply(Qmat,log(Qmat))))
 		F[i]=-F[i]
 		
