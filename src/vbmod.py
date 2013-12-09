@@ -244,6 +244,9 @@ def learn(A,K,net0={},opts={}):
 
 		# evaluate variational free energy, an approximation to the
 		# negative log-evidence	
+		## Below 1e-323, numpy.log() return -inf which makes the rest of the
+		## method to somehow fail.
+		Qmat[Qmat<1e-323] = 1e-323
 		F.append(betaln(ap,bp)-betaln(ap0,bp0)+betaln(am,bm)-betaln(am0,bm0)+sum(gammaln(a))-gammaln(sum(a))-(sum(gammaln(a0))-gammaln(sum(a0)))-sum(multiply(Qmat,log(Qmat))))
 		F[i]=-F[i]
 		
